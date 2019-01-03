@@ -198,7 +198,6 @@ MIDDLEWARE = list(filter(None, [
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'networkapi.middleware.ReferrerMiddleware',
-    'log_request_id.middleware.RequestIDMiddleware',
 
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -465,34 +464,30 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'filters': {
-        'request_id': {
-            '()': 'log_request_id.filters.RequestIDFilter'
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
         }
     },
     'formatters': {
-        'standard': {
-            'format': '%(levelname)-8s [%(asctime)s] [%(request_id)s] %(name)s: %(message)s'
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'standard',
-            'filters': ['request_id']
-        },
-    },
-    'loggers': {
-        'networkapi': {
-            'handlers': ['console'],
-            'level': DJANGO_LOG_LEVEL,
-            'propagate': True,
-        },
-        'log_request_id.middleware': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
+        'verbose': {
+            'format': '%(asctime)s [%(levelname)s] %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
         }
     },
+    'handlers': {
+        'debug': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'filters': ['require_debug_true'],
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'django.server': {
+            'handlers': ['debug'],
+            'level': 'DEBUG',
+        }
+    }
 }
 
 # Frontend

@@ -31,7 +31,6 @@ whitenoise = "*"
 wagtail-modeltranslation = "*"
 "psycopg2-binary" = "*"
 cloudinary = "*"
-django-log-request-id = "*"
 
 [dev-packages]
 "flake8" = "*"
